@@ -1,3 +1,4 @@
+//? Game Title: Escape from Burlington High: The Quest for Freedom
 const readline = require('readline');
 const readlineInterface = readline.createInterface(process.stdin, process.stdout);
 
@@ -6,12 +7,6 @@ function ask(questionText) {
         readlineInterface.question(questionText, resolve);
     });
 }
-
-// keeping the player engaged
-/* async function pressEnterToContinue() {
-    console.log('\n[Press enter to continue]\n');
-    await ask('');
-} */
 
 //?-----------------  Constructor -----------------
 class Location {
@@ -24,14 +19,14 @@ class Location {
 }
 
 const library = new Location("library", "where you started", ["keys", "tape"], false)
-const hall = new Location("hall", "it connects all rooms. Choose an option:\n  [go scienceRoom]  [go musicRoom]  [go mathRoom]  [go historyRoom]", ["lighter"])
-const scienceRoom = new Location("science room", "where you learned to dissect a frog", ["knife", "rope"])
-const musicRoom = new Location("music room", "where you play the trumpet", ["flute", "drums"])
-const mathRoom = new Location("math room", "the source of all your headaches", ["ruler", "calculator"])
-const historyRoom = new Location("history room", "where Mr Diemar teaches Ancient History. Looking up, you notice that the bookcase is just inches away from the hvac system", ["book","globe"])
-const hvac = new Location("hvac", "It's high up. You use your rope to climb!\n  [go street]  ", ["spider"])
-const street = new Location("street", "Let's go home!\n  [go home]")
-const home= new Location ("house", "It's nice to be home!")
+const hall = new Location("hall", "it connects all rooms. Choose an option:\n  [go science room]  [go music room]  [go math room]  [go history room]", ["lighter"])
+const science = new Location("science room", "where you learned to dissect a frog", ["knife", "rope"])
+const music = new Location("music room", "where you play the trumpet", ["flute", "drums"])
+const math = new Location("math room", "the source of all your headaches", ["ruler", "calculator"])
+const history = new Location("history room", "where Mr Diemar teaches Ancient History. Looking up, you notice that the bookcase is just inches away from the hvac system", ["book","globe"])
+const hvac = new Location("hvac", "It's high up. You use your rope to climb!\n  [go street]", ["spider"])
+const street = new Location("street", "You jump out of the hvac system to find yourself in 67 Cherry Street. The tension fades away as you catch your breath, disbelief washing over you.\n  [go home]", ["bat"])
+const home= new Location ("home")
 
 class Item {
     constructor (name, description) {
@@ -52,16 +47,17 @@ const calculator = new Item("calculator", "a high-tech calculator capable of per
 const book = new Item("book", "a thick book filled with knowledge and information, a potential source of wisdom");
 const globe = new Item("globe", "a globe of the world, ideal for geography enthusiasts and those seeking global insights");
 const spider = new Item("spider", "you encounter some spiders and decide to adopt one as your companion");
+const bat = new Item("bat", "fear courses through you");
 
 //?-----------------  Look up tables -----------------
 
 let locationLookUp = {
     library: library,
     hall: hall,
-    scienceRoom: scienceRoom,
-    musicRoom: musicRoom,
-    mathRoom: mathRoom,
-    historyRoom: historyRoom,
+    science: science,
+    music: music,
+    math: math,
+    history: history,
     hvac: hvac,
     street: street,
     home: home,
@@ -79,18 +75,19 @@ let itemLookUp = {
     ruler: ruler,
     calculator: calculator,
     globe: globe,
-    spider:spider
+    spider:spider,
+    bat: bat
 }
 
 //?-----------------  State Machines -----------------
 
 let locationStates = {
     library: ["hall"],
-    hall: ["library", "scienceRoom", "musicRoom", "mathRoom", "historyRoom"],
-    scienceRoom: ["hall"],
-    musicRoom: ["hall"],
-    mathRoom: ["hall"],
-    historyRoom: ["hall", "hvac"],
+    hall: ["library", "science", "music", "math", "history"],
+    science: ["hall"],
+    music: ["hall"],
+    math: ["hall"],
+    history: ["hall", "hvac"],
     hvac: ["street"],
     street: ["home"],
     home: ["home"]
@@ -100,21 +97,22 @@ let commandLookUp= {
     move: ["move" , "go", "exit", "run", "climb"],
     take: ["take", "grab"],
     drop: ["drop", "lose"]
-    
 }
 
 let itemStates = {
-    keys: ["tape", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "globe"],
-    tape: ["keys", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "globe"],
-    lighter: ["keys", "tape", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "globe"],
-    rope: ["keys", "tape", "lighter", "knife", "flute", "drums", "ruler","calculator", "book", "globe"],
-    knife: ["keys", "tape", "lighter", "rope", "flute", "drums", "ruler","calculator", "book", "globe"],
-    flute: ["keys", "tape", "lighter", "rope", "knife", "drums", "ruler","calculator", "book", "globe"],
-    drums: ["keys", "tape", "lighter", "rope", "knife", "flute", "ruler","calculator", "book", "globe"],
-    ruler: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "calculator", "book", "globe"],
-    calculator: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "ruler", "book", "globe"],
-    book: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "globe"],
-    globe: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "book"],
+    keys: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "globe", "bat", "spider"],
+    tape: ["keys", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "globe", "bat", "spider"],
+    lighter: ["keys", "tape", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "globe", "bat", "spider"],
+    rope: ["keys", "tape", "lighter", "knife", "flute", "drums", "ruler","calculator", "book", "globe", "bat", "spider"],
+    knife: ["keys", "tape", "lighter", "rope", "flute", "drums", "ruler","calculator", "book", "globe", "bat", "spider"],
+    flute: ["keys", "tape", "lighter", "rope", "knife", "drums", "ruler","calculator", "book", "globe", "bat", "spider"],
+    drums: ["keys", "tape", "lighter", "rope", "knife", "flute", "ruler","calculator", "book", "globe", "bat", "spider"],
+    ruler: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "calculator", "book", "globe", "bat", "spider"],
+    calculator: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "ruler", "book", "globe", "bat", "spider"],
+    book: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "globe", "bat", "spider"],
+    globe: ["keys", "tape", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "bat", "spider"],
+    spider: ["tape", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "globe", "keys", "bat"],
+    bat: ["tape", "lighter", "rope", "knife", "flute", "drums", "ruler","calculator", "book", "globe", "keys", "spider"],
 }
 
 //?-----------------  Functions -----------------
@@ -125,9 +123,9 @@ function moveLocation(newLocation) {
     let validMoves=locationStates[locationCurrent];
 
     if (validMoves.includes(newLocation)) {
-        console.log(`You leave the ${locationCurrent}.`)
+        console.log(`\nYou leave the ${locationCurrent}.`)
         locationCurrent=newLocation
-        console.log(`You run to the ${locationLookUp[newLocation].name}, ${locationLookUp[newLocation].description}. You can find: ${locationLookUp[newLocation].inventory}.  [take + item]`)
+        console.log(`You run to the ${locationLookUp[newLocation].name}, ${locationLookUp[newLocation].description}. Items: ${locationLookUp[newLocation].inventory}.  [take|drop + item]`)
         // console.log(locationCurrent);
 
     } else {
@@ -140,7 +138,6 @@ function takeItem(newItem) {
     let validItems=itemStates[itemCurrent];
 
     if (validItems.includes(newItem)) {
-        console.log(`You drop the ${itemCurrent}.`)
         itemCurrent=newItem
         console.log(`You pick up the ${itemLookUp[newItem].name}, ${itemLookUp[newItem].description}.`)
         //console.log(itemCurrent);
@@ -149,17 +146,25 @@ function takeItem(newItem) {
         console.log("You can't take this item yet.")}
 }
 
+function dropItem(dropItem) {
+    let dropItems=itemStates[itemCurrent];
+
+    if (dropItems.includes(dropItem)) {
+        console.log(`You drop the ${itemLookUp[dropItem].name}.`)
+}
+}
+
 //?-----------------  Main Game -----------------
 
 start();
 // starting the game - intro
 async function start() {
-    const welcomeMessage = `\nIn the heart of Burlington High, amidst the echoes of an abandoned Macy's department store turned school, you awaken to the deafening roar of F-35s overhead. The deserted school library, formerly the Macy's Furniture Gallery,envelops you in an eerie silence that is punctuated only by the faint rustling of forgotten pages. As a senior desperately preparing for finals, you had nodded off over your math textbook, succumbing to exhaustion. \nNow, with the lights extinguished, a chilling question lingers: Are you truly the sole occupant of this sprawling, shadowy building?\nSurveying the sturdy partition walls that enclose you, separating the floors and ceilings of the former department store that is now transformed into a labyrinth of classrooms, you can't help but feel like a lab mouse navigating a complex maze.\nYou need to get out of here!\n In the midst of your desperate quest for a solution, your focus zeroes in on the librarian's filing cabinet. You contemplate whether the path to your escape lies hidden there.\n\nAs you look at the filing cabinet's drawers, your exploration reveals a couple of potentially valuable items: a set of keys and a roll of tape. What will be your choice?\n  [take keys]  [take tape]`
+    const welcomeMessage = `Escape from Burlington High: The Quest for Freedom\n\nIn the heart of Burlington High, amidst the echoes of an abandoned Macy's department store turned school, you awaken to the deafening roar of F-35s overhead. The deserted school library, formerly the Macy's Furniture Gallery,envelops you in an eerie silence that is punctuated only by the faint rustling of forgotten pages. As a senior desperately preparing for finals, you had nodded off over your math textbook, succumbing to exhaustion. \nNow, with the lights extinguished, a chilling question lingers: Are you truly the sole occupant of this sprawling, shadowy building?\nSurveying the sturdy partition walls that enclose you, separating the floors and ceilings of the former department store that is now transformed into a labyrinth of classrooms, you can't help but feel like a lab mouse navigating a complex maze.\nYou need to get out of here!\n In the midst of your desperate quest for a solution, your focus zeroes in on the librarian's filing cabinet. You contemplate whether the path to your escape lies hidden there.\n\nAs you look at the filing cabinet's drawers, your exploration reveals a couple of potentially valuable items: a set of keys and a roll of tape.\n  [take keys]  [take tape]`
 
     console.log(welcomeMessage);
 
-    while (locationCurrent !== "house") {
-        let playerInput=await ask ("What would you like to do?");
+    while (locationCurrent !== "home") {
+        let playerInput=await ask ("\nWhat would you like to do?");
       //console.log(playerInput);
         let playerInputSplit=playerInput.split(" ");
       // console.log(playerInputSplit);
@@ -168,13 +173,15 @@ async function start() {
 /*      console.log(command);
         console.log(noun); */
      // console.log(commandLookUp.move.includes(command));
-        if (commandLookUp.move.includes(command)===true) {
+        if (commandLookUp.move.includes(command)===true && noun === "home") {
+        console.log("Congratulations!\n\nYou've successfully made it back home, just in time for dinner. As you settle into the warmth of your familiar surroundings, you can't help but reflect on the incredible adventure you've just experienced. Tomorrow, you'll have an amazing story to share with your friends. Your journey may have come to an end for now, but who knows what exciting quests await you in the future? For now, bask in the glory of your achievement and savor the taste of victory.\n\nYou've earned it!"); 
+        process.exit(); 
+        } else if (commandLookUp.move.includes(command)===true) {
             moveLocation(noun);
-
         } else if(commandLookUp.take.includes(command)===true) { 
             takeItem(noun);
-        } else if (locationCurrent === "home") {
-            console.log ("Congratulations! You've successfully made it back home just in time for dinner. As you settle into the warmth of your familiar surroundings, you can't help but reflect on the incredible adventure you've just experienced. Tomorrow, you'll have an amazing story to share with your friends. Your journey may have come to an end for now, but who knows what exciting quests await you in the future? For now, bask in the glory of your achievement and savor the taste of victory. You've earned it!"); process.exit();
+        } else if(commandLookUp.drop.includes(command)===true) { 
+            dropItem(noun);
         }
         }
     }
