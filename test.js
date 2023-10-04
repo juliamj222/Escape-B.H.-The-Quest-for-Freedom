@@ -19,7 +19,7 @@ class Location {
 }
 
 const library = new Location("library", "where you started", ["keys", "tape"], false)
-const hall = new Location("hall", "it connects all rooms. Choose an option:\n  [go science room]  [go music room]  [go math room]  [go history room]", ["lighter"])
+const hall = new Location("hall", "it connects all rooms.\n  [go science room]  [go music room]  [go math room]  [go history room]", ["lighter"])
 const science = new Location("science room", "where you learned to dissect a frog", ["knife", "rope"])
 const music = new Location("music room", "where you play the trumpet", ["flute", "drums"])
 const math = new Location("math room", "the source of all your headaches", ["ruler", "calculator"])
@@ -135,23 +135,25 @@ function moveLocation(newLocation) {
 let itemCurrent="book"
 
 function takeItem(newItem) {
-    let validItems=itemStates[itemCurrent];
-
-    if (validItems.includes(newItem)) {
-        itemCurrent=newItem
-        console.log(`You pick up the ${itemLookUp[newItem].name}, ${itemLookUp[newItem].description}.`)
-        //console.log(itemCurrent);
-
+    const currentLocation = locationLookUp[locationCurrent];
+    
+    if (currentLocation.inventory.includes(newItem)) {
+        currentLocation.inventory = currentLocation.inventory.filter(item => item !== newItem);
+        console.log(`You pick up the ${itemLookUp[newItem].name}, ${itemLookUp[newItem].description}.`);
     } else {
-        console.log("You can't take this item yet.")}
+        console.log("You can't take this item here.");
+    }
 }
 
 function dropItem(dropItem) {
-    let dropItems=itemStates[itemCurrent];
+    const currentLocation = locationLookUp[locationCurrent];
 
-    if (dropItems.includes(dropItem)) {
-        console.log(`You drop the ${itemLookUp[dropItem].name}.`)
-}
+    if (itemStates[itemCurrent].includes(dropItem)) {
+        currentLocation.inventory.push(dropItem);
+        console.log(`You drop the ${itemLookUp[dropItem].name}.`);
+    } else {
+        console.log("You can't drop this item here.");
+    }
 }
 
 //?-----------------  Main Game -----------------
