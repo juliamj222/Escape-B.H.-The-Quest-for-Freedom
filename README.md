@@ -24,7 +24,7 @@ And waits for input
 
 And if the user types an unknown command
 
-Then the game should output "I don't know how to ____"
+Then the game outputs "I don't know how to ____"
 
 ## Interact With an Item
 
@@ -32,7 +32,7 @@ Given the player has been given introductory text
 
 When the player enters a valid command, and target
 
-Then the game should output accordingly
+Then the game outputs accordingly
 
 And puts the player in the starting room
 
@@ -110,4 +110,4 @@ Given you have unlocked a door
 
 When you try and open the door again
 
-Then the door should still be unlocked, and allow you to pass to the next room
+Then the door is still unlocked, and allows you to pass to the next room
